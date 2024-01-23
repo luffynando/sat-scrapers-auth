@@ -7,3 +7,9 @@
 /vendor/
 *.swp
 *.swo
+
+# Editor config files
+/.vscode/settings.json
+
+# Environment files
+/tests/.env

@@ -18,14 +18,23 @@
         }
     ],
     "require": {
-        "php": ">=8.2"
+        "php": ">=8.2",
+        "ext-curl": "*",
+        "ext-dom": "*",
+        "guzzlehttp/guzzle": "^7.8.1",
+        "phpcfdi/credentials": "^v1.2.1",
+        "phpcfdi/image-captcha-resolver": "^0.2.3",
+        "psr/http-message": "^2.0",
+        "symfony/css-selector": "^7.0",
+        "symfony/dom-crawler": "^7.0"
     },
     "require-dev": {
-        "laravel/pint": "^1.13.7",
-        "pestphp/pest": "^2.28.1",
-        "phpstan/phpstan": "^1.10.50",
-        "rector/rector": "^0.18.13",
-        "symfony/var-dumper": "^6.4.0|^7.0.0"
+        "laravel/pint": "^v1.13.9",
+        "pestphp/pest": "^2.31",
+        "phpstan/phpstan": "^1.10.56",
+        "rector/rector": "^0.19.2",
+        "symfony/dotenv": "^v7.0.2",
+        "symfony/var-dumper": "^v7.0.2"
     },
     "autoload": {
         "psr-4": {
@@ -34,7 +43,7 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "SatScrapersAuth\\Tests\\": "tests/"
+            "Tests\\": "tests/"
         }
     },
     "minimum-stability": "stable",
@@ -43,7 +52,8 @@
         "sort-packages": true,
         "preferred-install": "dist",
         "allow-plugins": {
-            "pestphp/pest-plugin": true
+            "pestphp/pest-plugin": true,
+            "php-http/discovery": true
         }
     },
     "scripts": {
