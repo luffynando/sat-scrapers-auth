@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 use SatScrapersAuth\Internal\HtmlForm;
 
-describe('HtmlForm', function () {
-    test('get form values', function () {
+describe('HtmlForm', function (): void {
+    test('get form values', function (): void {
         $form = '<form>';
         $form .= '<input name="key" value="value">';
         $form .= '<select name="otherKey">';
@@ -22,7 +22,7 @@ describe('HtmlForm', function () {
         ]);
     });
 
-    test('read input values', function () {
+    test('read input values', function (): void {
         $form = '<form>';
         $form .= '<input name="key" value="value">';
         $form .= '<select name="otherKey">';
@@ -38,7 +38,7 @@ describe('HtmlForm', function () {
         ]);
     });
 
-    test('read select values', function () {
+    test('read select values', function (): void {
         $form = '<form>';
         $form .= '<input name="key" value="value">';
         $form .= '<select name="otherKey">';
@@ -54,7 +54,7 @@ describe('HtmlForm', function () {
         ]);
     });
 
-    test('read select values with selected', function () {
+    test('read select values with selected', function (): void {
         $form = '<form>';
         $form .= '<input name="key" value="value">';
         $form .= '<select name="otherKey">';
@@ -70,7 +70,7 @@ describe('HtmlForm', function () {
         ]);
     });
 
-    test('read select values with excluded', function () {
+    test('read select values with excluded', function (): void {
         $form = '<form>';
         $form .= '<select name="foo">';
         $form .= '<option value="x-foo" selected>x-foo</option>';
@@ -89,7 +89,7 @@ describe('HtmlForm', function () {
         ]);
     });
 
-    test('read form elements values without element', function () {
+    test('read form elements values without element', function (): void {
         $form = '<form>';
         $form .= '<input name="key" value="value">';
         $form .= '<select name="otherKey">';
@@ -103,7 +103,7 @@ describe('HtmlForm', function () {
         expect($elements)->toHaveLength(0);
     });
 
-    test('read form elements values with element', function () {
+    test('read form elements values with element', function (): void {
         $form = '<form>';
         $form .= '<input name="key" value="myValue">';
         $form .= '</form>';
@@ -115,7 +115,7 @@ describe('HtmlForm', function () {
         ]);
     });
 
-    test('read form elements values out of the parent element', function () {
+    test('read form elements values out of the parent element', function (): void {
         $form = '<form>';
         $form .= '</form>';
         $form .= '<input name="key" value="myValue">';
@@ -125,7 +125,7 @@ describe('HtmlForm', function () {
         expect($elements)->toHaveLength(0);
     });
 
-    test('read input values radios', function () {
+    test('read input values radios', function (): void {
         $form = '<form>';
         $form .= '<input name="foo" type="radio" value="1">';
         $form .= '<input name="foo" type="radio" value="2" checked="checked">';
@@ -141,7 +141,7 @@ describe('HtmlForm', function () {
         ]);
     });
 
-    test('read form elements values ignoring type', function () {
+    test('read form elements values ignoring type', function (): void {
         $form = '<form>';
         $form .= '<input name="hide" type="hidden" value="x-hidden">';
         $form .= '<input name="show" type="text" value="x-text">';
@@ -154,7 +154,7 @@ describe('HtmlForm', function () {
         ]);
     });
 
-    test('read form elements values ignoring name pattern',  function () {
+    test('read form elements values ignoring name pattern', function (): void {
         $form = '<form>';
         $form .= '<input name="ignore_1" value="">';
         $form .= '<input name="ignore_2" value="">';

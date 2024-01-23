@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 use SatScrapersAuth\Internal\MetaRefreshInspector;
 
-describe('MetaRefreshInspector', function () {
-    test('obtain meta refresh absolute', function () {
+describe('MetaRefreshInspector', function (): void {
+    test('obtain meta refresh absolute', function (): void {
         $html = <<< HTML
             <html>
                 <head>
@@ -19,7 +19,7 @@ describe('MetaRefreshInspector', function () {
         expect($url)->toBe('https://example.com/?foo=bar');
     });
 
-    test('obtain meta refresh relative to path', function () {
+    test('obtain meta refresh relative to path', function (): void {
         $html = <<< HTML
             <html>
                 <head>
@@ -33,7 +33,7 @@ describe('MetaRefreshInspector', function () {
         expect($url)->toBe('https://example.com/foo/bar/redirect.php?destination=1');
     });
 
-    test('obtain meta refresh relative to server', function () {
+    test('obtain meta refresh relative to server', function (): void {
         $html = <<< HTML
             <html>
                 <head>
@@ -47,7 +47,7 @@ describe('MetaRefreshInspector', function () {
         expect($url)->toBe('https://example.com/redirect.php?destination=1');
     });
 
-    test('obtain meta refresh without element', function () {
+    test('obtain meta refresh without element', function (): void {
         $html = <<< HTML
             <html>
                 <body>

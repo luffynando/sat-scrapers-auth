@@ -23,6 +23,6 @@ abstract class TestCase extends BaseTestCase
         if (! file_exists($path)) {
             return '';
         }
-        return strval(file_get_contents($path));
+        return (string) file_get_contents($path);
     }
 }

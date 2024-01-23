@@ -88,7 +88,7 @@ final class SatCfdiPortal extends AbstractSatPortal implements SatPortal
 
         $form = new HtmlForm($html, 'form');
         $inputs = $form->getFormValues();
-        $html = $this->postLoginPost($inputs);
+        $this->postLoginPost($inputs);
     }
 
     /**
