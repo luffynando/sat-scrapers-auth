@@ -66,9 +66,9 @@ final class SatHttpGateway
      *
      * @throws SatHttpGatewayException
      */
-    public function postGeneral(string $url, array $formData): string
+    public function postGeneral(string $reason, string $url, array $formData): string
     {
-        return $this->post('post to general form', $url, $this->headers->post('', ''), $formData);
+        return $this->post($reason, $url, $this->headers->post('', ''), $formData);
     }
 
     /**

@@ -10,24 +10,28 @@ use SatScrapersAuth\Internal\HtmlForm;
 final class SatCfdiPortal extends AbstractSatPortal implements SatPortal
 {
     /** @var string The main page to access CFDI Portal */
-    final public const PORTAL_CFDI = 'https://portalcfdi.facturaelectronica.sat.gob.mx/';
+    final public const MAIN_PORTAL = 'https://rfcampc.siat.sat.gob.mx/app/seg/SessionBroker?url=/PTSC/IdcSiat/autc/ReimpresionTramite/ConsultaTramite.jsf&parametro=c&idSessionBit=null';
 
-    /** @var string The page to search for received */
-    final public const PORTAL_CFDI_CONSULTA_RECEPTOR = 'https://portalcfdi.facturaelectronica.sat.gob.mx/ConsultaReceptor.aspx';
+    /** @var string The url to consulta tramite */
+    final public const CONSULTA_TRAMITE = 'https://rfcampc.siat.sat.gob.mx/PTSC/IdcSiat/autc/ReimpresionTramite/ConsultaTramite.jsf';
 
-    /** @var string The page to search for issued */
-    final public const PORTAL_CFDI_CONSULTA_EMISOR = 'https://portalcfdi.facturaelectronica.sat.gob.mx/ConsultaEmisor.aspx';
+    /** @var string The url to download CSF */
+    final public const DOWNLOAD_CONSTANCIA = 'https://rfcampc.siat.sat.gob.mx/PTSC/IdcSiat/IdcGeneraConstancia.jsf';
+
+    /** @var string The sso login */
+    final public const AUTH_LOGIN_SSO = 'https://login.siat.sat.gob.mx/nidp/saml2/sso';
+
+    /** @var string The post login */
+    public const AUTH_LOGIN_POST = 'https://rfcampc.siat.sat.gob.mx/saml2/sp/acs/post';
 
     /** @var string The page to log out */
-    final public const PORTAL_CFDI_LOGOUT = 'https://portalcfdi.facturaelectronica.sat.gob.mx/logout.aspx';
+    final public const AUTH_LOGOUT = 'https://login.siat.sat.gob.mx/nidp/app/plogout';
 
     /** @var string The authorization page to log in using FIEL */
-    final public const AUTH_LOGIN_FIEL = 'https://cfdiau.sat.gob.mx/nidp/app/login?id=SATx509Custom&sid=0&option=credential&sid=0';
+    final public const AUTH_LOGIN_FIEL = 'https://login.siat.sat.gob.mx/nidp/idff/sso?id=fiel&sid=0&option=credential&sid=0';
 
     /** @var string The authorization page to log in using CIEC */
-    final public const AUTH_LOGIN_CIEC = 'https://cfdiau.sat.gob.mx/nidp/wsfed/ep?id=SATUPCFDiCon&sid=0&option=credential&sid=0';
-
-    public function __construct(private readonly string $rfc) {}
+    final public const AUTH_LOGIN_CIEC = 'https://login.siat.sat.gob.mx/nidp/idff/sso?id=mat-ptsc-totp&sid=0&option=credential&sid=0';
 
     public function hasLogin(): bool
     {
@@ -38,7 +42,7 @@ final class SatCfdiPortal extends AbstractSatPortal implements SatPortal
 
         try {
             $html = $this->getPortalMainPage();
-            if (strpos($html, 'RFC Autenticado: ' . $this->rfc)) {
+            if (strpos($html, 'Reimpresión de Acuses')) {
                 return false;
             }
         } catch (SatHttpGatewayException) {
@@ -69,16 +73,42 @@ final class SatCfdiPortal extends AbstractSatPortal implements SatPortal
 
     /**
      * @param array<string, string> $inputs
+     *
+     * @throws SatHttpGatewayException
      */
     public function postLoginFiel(array $inputs): void
     {
         $httpGateway = $this->getHttpGateway();
-        $html = $httpGateway->postFielLoginData(self::AUTH_LOGIN_FIEL, $inputs);
+        $httpGateway->postFielLoginData(self::AUTH_LOGIN_FIEL, $inputs);
 
-        // Submit login credentials to portalcfdi
+        $html = $this->getPortalMainPage();
         $form = new HtmlForm($html, 'form');
-        $inputs = $form->getFormValues(); // wa, weesult, wctx
-        $httpGateway->postGeneral('post to portal main page', self::PORTAL_CFDI, $inputs);
+        $inputs = $form->getFormValues();
+        $html = $this->postSSOLogin($inputs);
+
+        $form = new HtmlForm($html, 'form');
+        $inputs = $form->getFormValues();
+        $html = $this->postLoginPost($inputs);
+    }
+
+    /**
+     * @param array<string, string> $formData
+     *
+     * @throws SatHttpGatewayException
+     */
+    private function postSSOLogin(array $formData): string
+    {
+        return $this->getHttpGateway()->postGeneral('post to sso login page', self::AUTH_LOGIN_SSO, $formData);
+    }
+
+    /**
+     * @param array<string, string> $formData
+     *
+     * @throws SatHttpGatewayException
+     */
+    private function postLoginPost(array $formData): string
+    {
+        return $this->getHttpGateway()->postGeneral('post to login post page', self::AUTH_LOGIN_POST, $formData);
     }
 
     /**
@@ -99,11 +129,11 @@ final class SatCfdiPortal extends AbstractSatPortal implements SatPortal
      */
     public function getPortalMainPage(): string
     {
-        return $this->getHttpGateway()->get('get portal main page', self::PORTAL_CFDI);
+        return $this->getHttpGateway()->get('get portal main page', self::MAIN_PORTAL);
     }
 
     public function logout(): void
     {
-        $this->getHttpGateway()->getLogout(self::PORTAL_CFDI_LOGOUT, self::PORTAL_CFDI);
+        $this->getHttpGateway()->getLogout(self::AUTH_LOGOUT, self::MAIN_PORTAL);
     }
 }
