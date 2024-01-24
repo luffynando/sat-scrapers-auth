@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace SatScrapersAuth\Portals;
 
+use SatScrapersAuth\Exceptions\LogicException;
 use SatScrapersAuth\Exceptions\LoginException;
 use SatScrapersAuth\Exceptions\SatHttpGatewayException;
 use SatScrapersAuth\SatHttpGateway;
@@ -67,7 +68,15 @@ interface SatPortal
      */
     public function checkIsAuthenticated(string $html): bool;
 
+    /**
+     * Get HTTP Gateway property
+     * @throws LogicException when property has not been set
+     */
     public function getHttpGateway(): SatHttpGateway;
 
+    /**
+     * Set HTTP Gateway property
+     * @internal
+     */
     public function setHttpGateway(SatHttpGateway $httpGateway): void;
 }
