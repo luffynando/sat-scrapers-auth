@@ -13,7 +13,8 @@ declare(strict_types=1);
 |
 */
 
-uses(\Tests\TestCase::class)->in('../tests/Unit/*', '../tests/Integration/*');
+uses(\Tests\TestCase::class)->group('unit')->in('../tests/Unit/*');
+uses(\Tests\Integration\IntegrationTestCase::class)->group('integration')->in('../tests/Integration/*');
 
 /*
 |--------------------------------------------------------------------------

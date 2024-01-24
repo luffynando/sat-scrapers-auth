@@ -57,6 +57,16 @@ interface SatPortal
      */
     public function getPortalMainPage(): string;
 
+    /**
+     * Access to Portal Main Page
+     */
+    public function accessPortalMainPage(): string;
+
+    /**
+     * Check if authenticated in give html input
+     */
+    public function checkIsAuthenticated(string $html): bool;
+
     public function getHttpGateway(): SatHttpGateway;
 
     public function setHttpGateway(SatHttpGateway $httpGateway): void;

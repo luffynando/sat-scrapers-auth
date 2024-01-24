@@ -38,7 +38,7 @@ final class SatCfdiPortal extends AbstractSatPortal implements SatPortal
 
         try {
             $html = $this->getPortalMainPage();
-            if (strpos($html, 'RFC Autenticado: ' . $this->rfc)) {
+            if (! $this->checkIsAuthenticated($html)) {
                 return false;
             }
         } catch (SatHttpGatewayException) {
@@ -47,6 +47,13 @@ final class SatCfdiPortal extends AbstractSatPortal implements SatPortal
         }
 
         return true;
+    }
+
+    public function checkIsAuthenticated(string $html): bool
+    {
+        dump($html);
+
+        return is_numeric(strpos($html, 'RFC Autenticado: ' . $this->rfc));
     }
 
     public function getLoginFielPage(): string
@@ -100,6 +107,20 @@ final class SatCfdiPortal extends AbstractSatPortal implements SatPortal
     public function getPortalMainPage(): string
     {
         return $this->getHttpGateway()->get('get portal main page', self::PORTAL_CFDI);
+    }
+
+    /**
+     * Access to Portal Main Page
+     */
+    public function accessPortalMainPage(): string
+    {
+        $htmlMainPage = $this->getPortalMainPage();
+        $inputs = (new HtmlForm($htmlMainPage, 'form'))->getFormValues();
+        if ($inputs !== []) {
+            return $this->getHttpGateway()->postGeneral('post to portal main page', self::PORTAL_CFDI, $inputs);
+        }
+
+        return $htmlMainPage;
     }
 
     public function logout(): void

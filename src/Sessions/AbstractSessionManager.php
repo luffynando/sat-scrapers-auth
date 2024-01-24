@@ -6,6 +6,7 @@ namespace SatScrapersAuth\Sessions;
 
 use SatScrapersAuth\Exceptions\LoginException;
 use SatScrapersAuth\Exceptions\SatHttpGatewayException;
+use SatScrapersAuth\SatHttpGateway;
 
 abstract class AbstractSessionManager implements SessionManager
 {
@@ -23,5 +24,28 @@ abstract class AbstractSessionManager implements SessionManager
     public function logout(): void
     {
         $this->portal->logout();
+    }
+
+    public function accessPortalMainPage(): void
+    {
+        try {
+            $htmlMainPage = $this->portal->accessPortalMainPage();
+        } catch (SatHttpGatewayException $exception) {
+            throw $this->createExceptionConnection('registering on login page', $exception);
+        }
+
+        if (! $this->portal->checkIsAuthenticated($htmlMainPage)) {
+            throw $this->createExceptionNotAuthenticated($htmlMainPage);
+        }
+    }
+
+    public function getHttpGateway(): SatHttpGateway
+    {
+        return $this->portal->getHttpGateway();
+    }
+
+    public function setHttpGateway(SatHttpGateway $httpGateway): void
+    {
+        $this->portal->setHttpGateway($httpGateway);
     }
 }

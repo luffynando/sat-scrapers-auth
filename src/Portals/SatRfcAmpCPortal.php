@@ -7,7 +7,7 @@ namespace SatScrapersAuth\Portals;
 use SatScrapersAuth\Exceptions\SatHttpGatewayException;
 use SatScrapersAuth\Internal\HtmlForm;
 
-final class SatCfdiPortal extends AbstractSatPortal implements SatPortal
+final class SatRfcAmpCPortal extends AbstractSatPortal implements SatPortal
 {
     /** @var string The main page to access CFDI Portal */
     final public const MAIN_PORTAL = 'https://rfcampc.siat.sat.gob.mx/app/seg/SessionBroker?url=/PTSC/IdcSiat/autc/ReimpresionTramite/ConsultaTramite.jsf&parametro=c&idSessionBit=null';
@@ -42,7 +42,7 @@ final class SatCfdiPortal extends AbstractSatPortal implements SatPortal
 
         try {
             $html = $this->getPortalMainPage();
-            if (strpos($html, 'Reimpresión de Acuses')) {
+            if (! $this->checkIsAuthenticated($html)) {
                 return false;
             }
         } catch (SatHttpGatewayException) {
@@ -51,6 +51,11 @@ final class SatCfdiPortal extends AbstractSatPortal implements SatPortal
         }
 
         return true;
+    }
+
+    public function checkIsAuthenticated(string $html): bool
+    {
+        return is_numeric(strpos($html, 'Reimpresión de Acuses'));
     }
 
     public function getLoginFielPage(): string
@@ -130,6 +135,14 @@ final class SatCfdiPortal extends AbstractSatPortal implements SatPortal
     public function getPortalMainPage(): string
     {
         return $this->getHttpGateway()->get('get portal main page', self::MAIN_PORTAL);
+    }
+
+    /**
+     * Access to Portal Main Page
+     */
+    public function accessPortalMainPage(): string
+    {
+        return $this->getPortalMainPage();
     }
 
     public function logout(): void

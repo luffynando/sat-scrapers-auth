@@ -166,7 +166,7 @@ final class SatHttpGateway
     {
         $options = [
             RequestOptions::COOKIES => $this->cookieJar,
-            RequestOptions::ALLOW_REDIRECTS => ['trackredirects' => true],
+            RequestOptions::ALLOW_REDIRECTS => ['trackredirects' => true, 'max' => 20],
         ] + $options;
         $this->effectiveUri = $uri;
         try {
