@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use SatScrapersAuth\Portals\SatCfdiPortal;
+use SatScrapersAuth\SatCfdiPortal;
 
 /** @var \Tests\Integration\IntegrationTestCase $this */
 describe('Login in CFDI Portal', function (): void {

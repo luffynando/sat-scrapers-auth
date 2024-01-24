@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use SatScrapersAuth\Portals\SatRfcAmpCPortal;
+use SatScrapersAuth\SatRfcAmpCPortal;
 
 /** @var \Tests\Integration\IntegrationTestCase $this */
 describe('Login in RFCAmpC Portal', function (): void {
