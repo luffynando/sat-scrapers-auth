@@ -51,8 +51,6 @@ final class SatCfdiPortal extends AbstractSatPortal implements SatPortal
 
     public function checkIsAuthenticated(string $html): bool
     {
-        dump($html);
-
         return is_numeric(strpos($html, 'RFC Autenticado: ' . $this->rfc));
     }
 
