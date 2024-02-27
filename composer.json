@@ -17,6 +17,7 @@
             "email": "luffynando@gmail.com"
         }
     ],
+    "type": "library",
     "require": {
         "php": ">=8.2",
         "ext-curl": "*",
