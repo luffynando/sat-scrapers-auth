@@ -77,6 +77,24 @@ final class CiecSessionManager extends AbstractSessionManager implements Session
         $this->loginInternal(1);
     }
 
+    public function loginWithOutCaptcha(): void
+    {
+        $postData = [
+            'Username' => $this->sessionData->getRfc(),
+            'Password' => $this->sessionData->getCiec(),
+        ];
+
+        try {
+            $response = $this->portal->postLoginCiec($postData);
+        } catch (SatHttpGatewayException $exception) {
+            throw CiecLoginException::connectionException('sending login data', $this->sessionData, $exception);
+        }
+
+        if (str_contains($response, 'frmLog')) {
+            throw CiecLoginException::incorrectLoginData($this->sessionData, $response, $postData);
+        }
+    }
+
     /**
      *
      * @throws CiecLoginException
