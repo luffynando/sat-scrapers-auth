@@ -6,7 +6,7 @@ namespace SatScrapersAuth\Sessions;
 
 use SatScrapersAuth\Exceptions\LogicException;
 use SatScrapersAuth\Exceptions\LoginException;
-use SatScrapersAuth\SatHttpGateway;
+use SatScrapersAuth\Portals\Contracts\SatPortal;
 
 interface SessionManager
 {
@@ -37,16 +37,16 @@ interface SessionManager
     public function accessPortalMainPage(): void;
 
     /**
-     * Get HTTP Gateway property
+     * Get SatPortal Property
+     *
      * @throws LogicException when property has not been set
      */
-    public function getHttpGateway(): SatHttpGateway;
+    public function getPortal(): SatPortal;
 
     /**
-     * Set HTTP Gateway property
-     * @internal
+     * Set SatPortal property
      */
-    public function setHttpGateway(SatHttpGateway $httpGateway): void;
+    public function setPortal(SatPortal $satPortal): void;
 
     /**
      * Get the RFC associated with the session data

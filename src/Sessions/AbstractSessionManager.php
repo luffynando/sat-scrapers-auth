@@ -4,13 +4,14 @@ declare(strict_types=1);
 
 namespace SatScrapersAuth\Sessions;
 
+use SatScrapersAuth\Exceptions\LogicException;
 use SatScrapersAuth\Exceptions\LoginException;
 use SatScrapersAuth\Exceptions\SatHttpGatewayException;
-use SatScrapersAuth\SatHttpGateway;
+use SatScrapersAuth\Portals\Contracts\SatPortal;
 
 abstract class AbstractSessionManager implements SessionManager
 {
-    public function __construct(protected \SatScrapersAuth\Portals\SatPortal $portal) {}
+    private ?SatPortal $portal = null;
 
     abstract protected function createExceptionConnection(string $when, SatHttpGatewayException $exception): LoginException;
 
@@ -18,34 +19,38 @@ abstract class AbstractSessionManager implements SessionManager
 
     public function hasLogin(): bool
     {
-        return $this->portal->hasLogin();
+        return $this->getPortal()->hasLogin();
     }
 
     public function logout(): void
     {
-        $this->portal->logout();
+        $this->getPortal()->logout();
     }
 
     public function accessPortalMainPage(): void
     {
         try {
-            $htmlMainPage = $this->portal->accessPortalMainPage();
+            $htmlMainPage = $this->getPortal()->accessPortalMainPage();
         } catch (SatHttpGatewayException $exception) {
             throw $this->createExceptionConnection('registering on login page', $exception);
         }
 
-        if (! $this->portal->checkIsAuthenticated($htmlMainPage)) {
+        if (! $this->getPortal()->checkIsAuthenticated($htmlMainPage)) {
             throw $this->createExceptionNotAuthenticated($htmlMainPage);
         }
     }
 
-    public function getHttpGateway(): SatHttpGateway
+    public function getPortal(): SatPortal
     {
-        return $this->portal->getHttpGateway();
+        if (!$this->portal instanceof SatPortal) {
+            throw LogicException::generic('Must set portal property before use');
+        }
+
+        return $this->portal;
     }
 
-    public function setHttpGateway(SatHttpGateway $httpGateway): void
+    public function setPortal(SatPortal $satPortal): void
     {
-        $this->portal->setHttpGateway($httpGateway);
+        $this->portal = $satPortal;
     }
 }

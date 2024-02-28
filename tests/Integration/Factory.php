@@ -15,7 +15,6 @@ use PhpCfdi\ImageCaptchaResolver\Resolvers\AntiCaptchaResolver;
 use PhpCfdi\ImageCaptchaResolver\Resolvers\CaptchaLocalResolver;
 use PhpCfdi\ImageCaptchaResolver\Resolvers\ConsoleResolver;
 use RuntimeException;
-use SatScrapersAuth\Portals\SatPortal;
 use SatScrapersAuth\SatHttpGateway;
 use SatScrapersAuth\Sessions\Ciec\CiecSessionData;
 use SatScrapersAuth\Sessions\Ciec\CiecSessionManager;
@@ -54,23 +53,23 @@ final class Factory
         throw new RuntimeException('Unable to create resolver');
     }
 
-    public function createSessionManager(SatPortal $satPortal): SessionManager
+    public function createSessionManager(): SessionManager
     {
         $satAuthMode = $this->env('SAT_AUTH_MODE');
         if ('FIEL' === $satAuthMode) {
-            return $this->createFielSessionManager($satPortal);
+            return $this->createFielSessionManager();
         }
 
         if ('CIEC' === $satAuthMode) {
-            return $this->createCiecSessionManager($satPortal);
+            return $this->createCiecSessionManager();
         }
 
         throw new LogicException("Unable to create a session manager using SAT_AUTHMODE='$satAuthMode'");
     }
 
-    public function createFielSessionManager(SatPortal $satPortal): FielSessionManager
+    public function createFielSessionManager(): FielSessionManager
     {
-        return new FielSessionManager($this->createFielSessionData(), $satPortal);
+        return new FielSessionManager($this->createFielSessionData());
     }
 
     public function createFielSessionData(): FielSessionData
@@ -91,9 +90,9 @@ final class Factory
         return new FielSessionData($fiel);
     }
 
-    public function createCiecSessionManager(SatPortal $satPortal): CiecSessionManager
+    public function createCiecSessionManager(): CiecSessionManager
     {
-        return new CiecSessionManager($this->createCiecSessionData(), $satPortal);
+        return new CiecSessionManager($this->createCiecSessionData());
     }
 
     public function createCiecSessionData(): CiecSessionData

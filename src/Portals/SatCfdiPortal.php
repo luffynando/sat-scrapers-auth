@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace SatScrapersAuth;
+namespace SatScrapersAuth\Portals;
 
 use SatScrapersAuth\Exceptions\SatHttpGatewayException;
 use SatScrapersAuth\Internal\HtmlForm;
-use SatScrapersAuth\Portals\AbstractSatPortal;
-use SatScrapersAuth\Portals\SatPortal;
+use SatScrapersAuth\Portals\Contracts\SatPortal;
+use SatScrapersAuth\Portals\Internal\AbstractSatPortal;
 
 final class SatCfdiPortal extends AbstractSatPortal implements SatPortal
 {
@@ -28,8 +28,6 @@ final class SatCfdiPortal extends AbstractSatPortal implements SatPortal
 
     /** @var string The authorization page to log in using CIEC */
     final public const AUTH_LOGIN_CIEC = 'https://cfdiau.sat.gob.mx/nidp/wsfed/ep?id=SATUPCFDiCon&sid=0&option=credential&sid=0';
-
-    public function __construct(private readonly string $rfc) {}
 
     public function hasLogin(): bool
     {
@@ -53,7 +51,7 @@ final class SatCfdiPortal extends AbstractSatPortal implements SatPortal
 
     public function checkIsAuthenticated(string $html): bool
     {
-        return is_numeric(strpos($html, 'RFC Autenticado: ' . $this->rfc));
+        return is_numeric(strpos($html, 'RFC Autenticado: ' . $this->getSessionManager()->getRfc()));
     }
 
     public function getLoginFielPage(): string

@@ -9,23 +9,19 @@ use PhpCfdi\ImageCaptchaResolver\CaptchaResolverInterface;
 use SatScrapersAuth\Exceptions\SatHttpGatewayException;
 use SatScrapersAuth\Exceptions\LoginException;
 use SatScrapersAuth\Internal\CaptchaBase64Extractor;
-use SatScrapersAuth\Portals\SatPortal;
 use SatScrapersAuth\Sessions\AbstractSessionManager;
 use SatScrapersAuth\Sessions\SessionManager;
 use Throwable;
 
 final class CiecSessionManager extends AbstractSessionManager implements SessionManager
 {
-    public function __construct(private readonly CiecSessionData $sessionData, SatPortal $portal)
-    {
-        parent::__construct($portal);
-    }
+    public function __construct(private readonly CiecSessionData $sessionData) {}
 
-    public static function create(string $rfc, string $ciec, CaptchaResolverInterface $resolver, SatPortal $portal): self
+    public static function create(string $rfc, string $ciec, CaptchaResolverInterface $resolver): self
     {
         $sessionData = new CiecSessionData($rfc, $ciec, $resolver);
 
-        return new self($sessionData, $portal);
+        return new self($sessionData);
     }
 
     /**
@@ -34,7 +30,7 @@ final class CiecSessionManager extends AbstractSessionManager implements Session
     public function requestCaptchaImage(): CaptchaImage
     {
         try {
-            $html = $this->portal->getLoginCiecPage();
+            $html = $this->getPortal()->getLoginCiecPage();
         } catch (SatHttpGatewayException $exception) {
             throw CiecLoginException::connectionException('getting captcha image', $this->sessionData, $exception);
         }
@@ -85,7 +81,7 @@ final class CiecSessionManager extends AbstractSessionManager implements Session
         ];
 
         try {
-            $response = $this->portal->postLoginCiec($postData);
+            $response = $this->getPortal()->postLoginCiec($postData);
         } catch (SatHttpGatewayException $exception) {
             throw CiecLoginException::connectionException('sending login data', $this->sessionData, $exception);
         }
@@ -130,7 +126,7 @@ final class CiecSessionManager extends AbstractSessionManager implements Session
         ];
 
         try {
-            $response = $this->portal->postLoginCiec($postData);
+            $response = $this->getPortal()->postLoginCiec($postData);
         } catch (SatHttpGatewayException $exception) {
             throw CiecLoginException::connectionException('sending login data', $this->sessionData, $exception);
         }

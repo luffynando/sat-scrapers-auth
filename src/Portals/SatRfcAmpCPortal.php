@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace SatScrapersAuth;
+namespace SatScrapersAuth\Portals;
 
 use SatScrapersAuth\Exceptions\SatHttpGatewayException;
 use SatScrapersAuth\Internal\HtmlForm;
-use SatScrapersAuth\Portals\AbstractSatPortal;
-use SatScrapersAuth\Portals\SatPortal;
+use SatScrapersAuth\Portals\Contracts\SatPortal;
+use SatScrapersAuth\Portals\Internal\AbstractSatPortal;
 
 final class SatRfcAmpCPortal extends AbstractSatPortal implements SatPortal
 {

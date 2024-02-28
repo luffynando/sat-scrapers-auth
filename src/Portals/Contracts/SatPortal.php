@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace SatScrapersAuth\Portals;
+namespace SatScrapersAuth\Portals\Contracts;
 
-use SatScrapersAuth\Exceptions\LogicException;
 use SatScrapersAuth\Exceptions\LoginException;
 use SatScrapersAuth\Exceptions\SatHttpGatewayException;
 use SatScrapersAuth\SatHttpGateway;
+use SatScrapersAuth\Sessions\SessionManager;
 
 interface SatPortal
 {
@@ -69,14 +69,12 @@ interface SatPortal
     public function checkIsAuthenticated(string $html): bool;
 
     /**
-     * Get HTTP Gateway property
-     * @throws LogicException when property has not been set
+     * Get SessionManager property
      */
-    public function getHttpGateway(): SatHttpGateway;
+    public function getSessionManager(): SessionManager;
 
     /**
-     * Set HTTP Gateway property
-     * @internal
+     * Get HTTP Gateway property
      */
-    public function setHttpGateway(SatHttpGateway $httpGateway): void;
+    public function getHttpGateway(): SatHttpGateway;
 }

@@ -2,30 +2,32 @@
 
 declare(strict_types=1);
 
-use SatScrapersAuth\SatAcusesPortal;
+use SatScrapersAuth\Portals\SatAcusesPortal;
 
 /** @var \Tests\Integration\IntegrationTestCase $this */
 describe('Login in Acuses Portal using CIEC', function (): void {
     test('login and logout', function (): void {
         /** @var \Tests\Integration\Factory $factory */
         $factory = $this->getFactory();
-        $rfc = $factory->env('SAT_AUTH_RFC');
-        $portal = new SatAcusesPortal($rfc);
         try {
-            $sessionManager = $factory->createCiecSessionManager($portal);
+            $sessionManager = $factory->createCiecSessionManager();
         } catch (Throwable $exception) {
             $this->markTestSkipped($exception->getMessage());
         }
 
-        $sessionManager->setHttpGateway($factory->createSatHttpGateway($sessionManager, 'acusesportal'));
-        if (!$sessionManager->hasLogin()) {
+        $portal = new SatAcusesPortal(
+            $sessionManager,
+            $factory->createSatHttpGateway($sessionManager, 'acusesportal'),
+        );
+
+        if (!$portal->hasLogin()) {
             $sessionManager->loginWithOutCaptcha();
         }
 
-        $sessionManager->accessPortalMainPage();
-        expect($sessionManager->hasLogin())->toBeTrue();
+        $portal->getSessionManager()->accessPortalMainPage();
+        expect($portal->hasLogin())->toBeTrue();
 
-        $sessionManager->logout();
-        expect($sessionManager->hasLogin())->toBeFalse();
+        $portal->logout();
+        expect($portal->hasLogin())->toBeFalse();
     });
 });
