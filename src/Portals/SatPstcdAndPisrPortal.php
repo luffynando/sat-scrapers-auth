@@ -17,7 +17,14 @@ final class SatPstcdAndPisrPortal extends AbstractSatPortal implements SatPortal
     /** @var string The main portal */
     final public const MAIN_PORTAL = 'https://pstcdypisr.clouda.sat.gob.mx/';
 
+    /** @var string The page to consult by declaration */
     final public const CONSULTA_DECLARACION = 'https://pstcdypisr.clouda.sat.gob.mx/Consulta/Consulta?tipoDocumento=1';
+
+    /** @var string The endpoint to search with ajax request */
+    final public const CONSULTA_BUSCAR = 'https://pstcdypisr.clouda.sat.gob.mx/Consulta/Buscar';
+
+    /** @var string The endpoint to retrieve file pdf of declaration */
+    final public const RECUPERAR_ARCHIVO = 'https://pstcdypisr.clouda.sat.gob.mx/Consulta/RecuperarArchivo?enLinea=0&tipoDocumento=1';
 
     /** @var string The page to log out */
     final public const AUTH_LOGOUT = 'https://pstcdypisr.clouda.sat.gob.mx/Home/LogOut';
