@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 use SatScrapersAuth\Internal\HtmlForm;
 
-/** @var \Tests\TestCase $this */
 describe('HtmlForm', function (): void {
     test('get form values', function (): void {
         $form = '<form>';

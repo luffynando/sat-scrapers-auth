@@ -20,11 +20,17 @@ final class SatPstcdAndPisrPortal extends AbstractSatPortal implements SatPortal
     /** @var string The page to consult by declaration */
     final public const CONSULTA_DECLARACION = 'https://pstcdypisr.clouda.sat.gob.mx/Consulta/Consulta?tipoDocumento=1';
 
+    /** @var string The page to consult acuse recibo declaracion */
+    final public const CONSULTA_REIMPRESION_ACUSE_RECIBO = 'https://pstcdypisr.clouda.sat.gob.mx/Consulta/Consulta?tipoDocumento=3';
+
     /** @var string The endpoint to search with ajax request */
     final public const CONSULTA_BUSCAR = 'https://pstcdypisr.clouda.sat.gob.mx/Consulta/Buscar';
 
     /** @var string The endpoint to retrieve file pdf of declaration */
-    final public const RECUPERAR_ARCHIVO = 'https://pstcdypisr.clouda.sat.gob.mx/Consulta/RecuperarArchivo?enLinea=0&tipoDocumento=1';
+    final public const RECUPERAR_ARCHIVO_DECLARACION = 'https://pstcdypisr.clouda.sat.gob.mx/Consulta/RecuperarArchivo?enLinea=0&tipoDocumento=1';
+
+    /** @var string The endpoint to retrieve file pdf of acuse declaration */
+    final public const RECUPERAR_ARCHIVO_ACUSE = 'https://pstcdypisr.clouda.sat.gob.mx/Consulta/RecuperarArchivo?enLinea=0&tipoDocumento=3';
 
     /** @var string The page to log out */
     final public const AUTH_LOGOUT = 'https://pstcdypisr.clouda.sat.gob.mx/Home/LogOut';
@@ -102,8 +108,8 @@ final class SatPstcdAndPisrPortal extends AbstractSatPortal implements SatPortal
     {
         $html = $this->getPortalMainPage();
         $inputs = (new HtmlForm($html, 'form'))->getFormValues();
-        if (count($inputs) > 0) {
-            $html = $this->getHttpGateway()->postGeneral('post to portal main page', self::MAIN_PORTAL, $inputs);
+        if ($inputs !== []) {
+            return $this->getHttpGateway()->postGeneral('post to portal main page', self::MAIN_PORTAL, $inputs);
         }
 
         return $html;
