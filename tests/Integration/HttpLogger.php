@@ -104,12 +104,14 @@ final class HttpLogger extends ArrayObject
     }
 
     /**
-     * @return array<string|array<string>>
+     * @return array<array<string>|string>
      */
     public function bodyToVars(string $body): array
     {
         $variables = [];
         parse_str($body, $variables);
+
+        /** @var array<array<string>|string> $variables */
         return $variables;
     }
 }

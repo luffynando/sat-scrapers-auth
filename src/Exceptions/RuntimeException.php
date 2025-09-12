@@ -8,7 +8,7 @@ use Throwable;
 
 final class RuntimeException extends \RuntimeException implements SatException
 {
-    protected function __construct(string $message, Throwable $previous = null)
+    protected function __construct(string $message, ?Throwable $previous = null)
     {
         parent::__construct($message, 0, $previous);
     }

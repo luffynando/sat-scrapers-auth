@@ -9,12 +9,12 @@ use Throwable;
 
 final class FielLoginException extends LoginException
 {
-    public function __construct(string $message, string $contents, private readonly FielSessionData $sessionData, Throwable $previous = null)
+    public function __construct(string $message, string $contents, private readonly FielSessionData $sessionData, ?Throwable $previous = null)
     {
         parent::__construct($message, $contents, $previous);
     }
 
-    public static function connectionException(string $when, FielSessionData $sessionData, Throwable $previous = null): self
+    public static function connectionException(string $when, FielSessionData $sessionData, ?Throwable $previous = null): self
     {
         return new self("Connection error when $when", '', $sessionData, $previous);
     }

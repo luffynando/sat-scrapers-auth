@@ -19,7 +19,7 @@ final class CiecLoginException extends LoginException
      * @param array<string, string> $postedData
      * @param Throwable|null $previous
      */
-    public function __construct(string $message, private readonly CiecSessionData $sessionData, string $contents, private readonly array $postedData = [], Throwable $previous = null)
+    public function __construct(string $message, private readonly CiecSessionData $sessionData, string $contents, private readonly array $postedData = [], ?Throwable $previous = null)
     {
         parent::__construct($message, $contents, $previous);
     }
@@ -31,12 +31,12 @@ final class CiecLoginException extends LoginException
         return new self($message, $data, $contents);
     }
 
-    public static function noCaptchaImageFound(CiecSessionData $data, string $contents, Throwable $previous = null): self
+    public static function noCaptchaImageFound(CiecSessionData $data, string $contents, ?Throwable $previous = null): self
     {
         return new self('It was unable to find the captcha image', $data, $contents, [], $previous);
     }
 
-    public static function captchaWithoutAnswer(CiecSessionData $data, CaptchaImageInterface $captchaImage, Throwable $previous = null): self
+    public static function captchaWithoutAnswer(CiecSessionData $data, CaptchaImageInterface $captchaImage, ?Throwable $previous = null): self
     {
         $exception = new self('Unable to decode captcha', $data, '', [], $previous);
         $exception->captchaImage = $captchaImage;
