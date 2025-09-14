@@ -18,10 +18,10 @@ final class SatAgrPortal extends AbstractSatPortal implements SatPortal
     final public const CONSULTA_NOTIFICACIONES = 'https://agr.siat.sat.gob.mx/PTSC/notificacionElectronica/faces/Pages/principalNotificaciones.jsf';
 
     /** @var string The page before sso */
-    final public const AUTH_AFTER_SEND_FIEL = 'https://login.siat.sat.gob.mx/nidp/idff/sso?sid=0';
+    final public const AUTH_AFTER_SEND_FIEL = 'https://agr.siat.sat.gob.mx/app/seg/cont/accesoC?url=/PTSC/notificacionElectronica/faces/Pages/principalNotificaciones.jsf&idSessionBit=null';
 
     /** @var string The sso login */
-    final public const AUTH_LOGIN_SSO = 'https://login.siat.sat.gob.mx/nidp/saml2/sso';
+    final public const AUTH_SSO = 'https://login.siat.sat.gob.mx/nidp/saml2/sso';
 
     /** @var string The post login */
     public const AUTH_LOGIN_POST = 'https://agr.siat.sat.gob.mx/cloudc/saml2/sp/acs/post';
@@ -94,7 +94,7 @@ final class SatAgrPortal extends AbstractSatPortal implements SatPortal
         $html = $this->getAfterFielLoginPage();
         $form = new HtmlForm($html, 'form');
         $inputs = $form->getFormValues();
-        $html = $this->postSSOLogin($inputs);
+        $html = $this->postSSO($inputs);
 
         $form = new HtmlForm($html, 'form');
         $inputs = $form->getFormValues();
@@ -106,9 +106,9 @@ final class SatAgrPortal extends AbstractSatPortal implements SatPortal
      *
      * @throws SatHttpGatewayException
      */
-    private function postSSOLogin(array $formData): string
+    private function postSSO(array $formData): string
     {
-        return $this->getHttpGateway()->postGeneral('post to sso login page', self::AUTH_LOGIN_SSO, $formData);
+        return $this->getHttpGateway()->postGeneral('post to sso page', self::AUTH_SSO, $formData);
     }
 
     /**
@@ -173,8 +173,13 @@ final class SatAgrPortal extends AbstractSatPortal implements SatPortal
     public function logout(): void
     {
         $html = $this->getHttpGateway()->getLogout(self::AUTH_LOGOUT, self::MAIN_PORTAL);
+
         $form = new HtmlForm($html, 'form');
         $inputs = $form->getFormValues();
-        $this->postLogoutPost($inputs);
+        $html = $this->postLogoutPost($inputs);
+
+        $form = new HtmlForm($html, 'form');
+        $inputs = $form->getFormValues();
+        $this->postSSO($inputs);
     }
 }
