@@ -17,11 +17,11 @@ final class SatAgrPortal extends AbstractSatPortal implements SatPortal
     /** @var string The url to consulta notificaciones */
     final public const CONSULTA_NOTIFICACIONES = 'https://agr.siat.sat.gob.mx/PTSC/notificacionElectronica/faces/Pages/principalNotificaciones.jsf';
 
-    /** @var string The page before sso */
-    final public const AUTH_AFTER_SEND_FIEL = 'https://agr.siat.sat.gob.mx/app/seg/cont/accesoC?url=/PTSC/notificacionElectronica/faces/Pages/principalNotificaciones.jsf&idSessionBit=null';
+    /** @var string The saml2 sso login */
+    final public const AUTH_SAML2_SSO_SIAT = 'https://login.siat.sat.gob.mx/nidp/saml2/sso';
 
-    /** @var string The sso login */
-    final public const AUTH_SSO = 'https://login.siat.sat.gob.mx/nidp/saml2/sso';
+    /** @var string The saml2 slo logout */
+    final public const AUTH_SAML2_SLO_SIAT = 'https://login.siat.sat.gob.mx/nidp/saml2/slo';
 
     /** @var string The post login */
     public const AUTH_LOGIN_POST = 'https://agr.siat.sat.gob.mx/cloudc/saml2/sp/acs/post';
@@ -91,10 +91,22 @@ final class SatAgrPortal extends AbstractSatPortal implements SatPortal
         $httpGateway = $this->getHttpGateway();
         $html = $httpGateway->postFielLoginData(self::AUTH_LOGIN_FIEL, $inputs);
 
-        $html = $this->getAfterFielLoginPage();
+        if (!is_numeric(strpos($html, 'nidp/idff/sso?sid=0'))) {
+            return;
+        }
+
+        $html = $this->getHttpGateway()->get('redirect to siat', 'https://login.siat.sat.gob.mx/nidp/idff/sso?sid=0');
+        if (!is_numeric(strpos($html, 'nidp/saml2/sso'))) {
+            return;
+        }
+
         $form = new HtmlForm($html, 'form');
         $inputs = $form->getFormValues();
-        $html = $this->postSSO($inputs);
+        $html = $this->postSSOSiat($inputs);
+
+        if (!is_numeric(strpos($html, 'saml2/sp/acs/post'))) {
+            return;
+        }
 
         $form = new HtmlForm($html, 'form');
         $inputs = $form->getFormValues();
@@ -106,9 +118,19 @@ final class SatAgrPortal extends AbstractSatPortal implements SatPortal
      *
      * @throws SatHttpGatewayException
      */
-    private function postSSO(array $formData): string
+    private function postSSOSiat(array $formData): string
     {
-        return $this->getHttpGateway()->postGeneral('post to sso page', self::AUTH_SSO, $formData);
+        return $this->getHttpGateway()->postGeneral('post to sso siat page', self::AUTH_SAML2_SSO_SIAT, $formData);
+    }
+
+    /**
+     * @param array<string, string> $formData
+     *
+     * @throws SatHttpGatewayException
+     */
+    private function postSLOSiat(array $formData): string
+    {
+        return $this->getHttpGateway()->postGeneral('post to slo siat page', self::AUTH_SAML2_SLO_SIAT, $formData);
     }
 
     /**
@@ -153,16 +175,6 @@ final class SatAgrPortal extends AbstractSatPortal implements SatPortal
     }
 
     /**
-     * Retrieve the page for sso
-     *
-     * @throws SatHttpGatewayException
-     */
-    public function getAfterFielLoginPage(): string
-    {
-        return $this->getHttpGateway()->get('get sso login page', self::AUTH_AFTER_SEND_FIEL);
-    }
-
-    /**
      * Access to Portal Main Page
      */
     public function accessPortalMainPage(): string
@@ -180,6 +192,6 @@ final class SatAgrPortal extends AbstractSatPortal implements SatPortal
 
         $form = new HtmlForm($html, 'form');
         $inputs = $form->getFormValues();
-        $this->postSSO($inputs);
+        $this->postSLOSiat($inputs);
     }
 }
