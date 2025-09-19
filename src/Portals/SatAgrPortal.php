@@ -14,6 +14,9 @@ final class SatAgrPortal extends AbstractSatPortal implements SatPortal
     /** @var string The main page to access AGR Portal */
     final public const MAIN_PORTAL = 'https://agr.siat.sat.gob.mx/app/seg/SessionBroker?url=/PTSC/notificacionElectronica/faces/Pages/principalNotificaciones.jsf&parametro=c&idSessionBit=null';
 
+    /** @var string The pre access page to access AGR Portal */
+    final public const PRE_ACCESS_PORTAL = 'https://agr.siat.sat.gob.mx/app/seg/cont/accesoC?url=/PTSC/notificacionElectronica/faces/Pages/principalNotificaciones.jsf&idSessionBit=null';
+
     /** @var string The url to consulta notificaciones */
     final public const CONSULTA_NOTIFICACIONES = 'https://agr.siat.sat.gob.mx/PTSC/notificacionElectronica/faces/Pages/principalNotificaciones.jsf';
 
@@ -97,16 +100,12 @@ final class SatAgrPortal extends AbstractSatPortal implements SatPortal
 
         $html = $this->getHttpGateway()->get('redirect to siat', 'https://login.siat.sat.gob.mx/nidp/idff/sso?sid=0');
         if (!is_numeric(strpos($html, 'nidp/saml2/sso'))) {
-            return;
+            $html = $this->getHttpGateway()->get('redirect to autentication', self::PRE_ACCESS_PORTAL);
         }
 
         $form = new HtmlForm($html, 'form');
         $inputs = $form->getFormValues();
         $html = $this->postSSOSiat($inputs);
-
-        if (!is_numeric(strpos($html, 'saml2/sp/acs/post'))) {
-            return;
-        }
 
         $form = new HtmlForm($html, 'form');
         $inputs = $form->getFormValues();
