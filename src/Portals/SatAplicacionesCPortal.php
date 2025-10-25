@@ -14,6 +14,9 @@ final class SatAplicacionesCPortal extends AbstractSatPortal implements SatPorta
     /** @var string The main page to access AGR Portal */
     final public const MAIN_PORTAL = 'https://aplicacionesc.mat.sat.gob.mx/WebComunicados/Comunicados.aspx';
 
+    /** @var string The pre access page to generate login sso */
+    final public const PRE_ACCESS_PORTAL = 'https://aplicacionesc.mat.sat.gob.mx/nesp/app/plogin?agAppNa=POL287_BuzonTributario&c=sat/ciec/ptsc/contribuyentes/uri&target=%22https://aplicacionesc.mat.sat.gob.mx/WebComunicados/Comunicados.aspx%22';
+
     /** @var string The sso login */
     final public const AUTH_LOGIN_SSO = 'https://login.siat.sat.gob.mx/nidp/saml2/sso';
 
@@ -83,7 +86,15 @@ final class SatAplicacionesCPortal extends AbstractSatPortal implements SatPorta
     public function postLoginFiel(array $inputs): void
     {
         $httpGateway = $this->getHttpGateway();
-        $httpGateway->postFielLoginData(self::AUTH_LOGIN_FIEL, $inputs);
+        $html = $httpGateway->postFielLoginData(self::AUTH_LOGIN_FIEL, $inputs);
+        if (!is_numeric(strpos($html, 'nidp/app?sid=0'))) {
+            return;
+        }
+
+        $html = $this->getHttpGateway()->get('redirect to siat', 'https://login.siat.sat.gob.mx/nidp/app?sid=0');
+        if (!is_numeric(strpos($html, 'nidp/saml2/sso'))) {
+            $html = $this->getHttpGateway()->get('redirect to autentication', self::PRE_ACCESS_PORTAL);
+        }
 
         $html = $this->getPortalMainPage();
         $form = new HtmlForm($html, 'form');
